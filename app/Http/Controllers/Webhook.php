@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Gateway\EventLogGateway;
-use App\Gateway\QuestionGateway;
-use App\Gateway\UserGateway;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Log\Logger;
@@ -35,15 +34,21 @@ class Webhook extends Controller
      * @var Logger
      */
     private $logger;    
+    /**
+     * @var EventLogGateway
+     */
+    private $logGateway;
 
     public function __construct(
         Request $request,
         Response $response,
-        Logger $logger        
+        Logger $logger,  
+        EventLogGateway $logGateway      
     ) {
         $this->request = $request;
         $this->response = $request;
         $this->logger = $logger;
+        $this->logGateway = $logGateway;
     }
 
     public function __invoke()

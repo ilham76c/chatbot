@@ -20,7 +20,7 @@ class EventLogGateway
     {
         $this->db->table('eventlog')->insert([
             'signature' => $signature,
-            'event' => $body
+            'events' => $body
         ]);          
     }
 }

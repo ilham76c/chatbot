@@ -98,7 +98,7 @@ class Webhook extends Controller
 
                 // if user not registered
                 if (! $this->user) {
-                    $this->followCallback($vent);
+                    $this->followCallback($event);
                 }
                 else 
                 {

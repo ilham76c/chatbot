@@ -31,7 +31,7 @@ class UserGateway
 
     public function saveUser(string $userId, string $displayName)
     {
-        $thin->db->table('user')->insert([
+        $this->db->table('user')->insert([
             'user_id' => $userId,
             'display_name' => $displayName
         ]);

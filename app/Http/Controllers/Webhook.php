@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Log\Logger;
 use LINE\LINEBot;
+
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\StickerMessageBuilder;
@@ -43,6 +44,10 @@ class Webhook extends Controller
      * @var UserGateway
      */
     private $userGateway;
+    /**
+     * @var array
+     */
+    private $user;
 
     public function __construct(
         Request $request,

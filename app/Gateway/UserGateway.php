@@ -39,7 +39,10 @@ class UserGateway
 
     function setUserProgress(string $userId, int $questionNumer)
     {
-       
+        $this->db->table('users')->update([
+            'number' => $questionNumer,
+            'user_id' => $userId
+        ]);
     }
 
     function setScore(string $userId, int $score)

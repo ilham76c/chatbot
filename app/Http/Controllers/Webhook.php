@@ -116,4 +116,35 @@ class Webhook extends Controller
             }
         }
     }
+
+    public function followCallback($event)
+    {
+        $res = $this->bot->getProfile($event['source']['userId']);
+        if ($res->isSucceeded()) 
+        {
+            $profile = $res->getJSONDecodedBody();
+
+            // create welcome message
+            $message = "Salam kenal, " . $profile['displayName'] . "!\n";
+            $message .= "Silahkan kirim pesan \"MULAI\" untuk memulai kuis.";
+            $textMessageBuilder = new TextMessageBuilder($message);
+
+            // create sticker message
+            $stickerMessageBuilder = new StickerMessageBuilder(1,3);
+
+            // marge all message
+            $multiMessageBuilder = new MultiMessageBuilder();
+            $multiMessageBuilder->add($textMessageBuilder);
+            $multiMessageBuilder->add($stickerMessageBuilder);
+
+            // send reply message
+            $this->bot->replyMessage($event['replyToken'], $multiMessageBuilder);
+
+            // save user data
+            $this->userGateway->saveUser(
+                $profile['userId'],
+                $profile['displayName']
+            );
+        }
+    }
 }

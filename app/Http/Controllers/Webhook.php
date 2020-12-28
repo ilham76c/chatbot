@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Gateway\EventLogGateway;
 use App\Gateway\UserGateway;
+use App\Gateway\QuestionGateway;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -45,22 +46,29 @@ class Webhook extends Controller
      */
     private $userGateway;
     /**
+     * @var QuestionGateway
+     */
+    private $questionGateway;
+    /**
      * @var array
      */
     private $user;
+    
 
     public function __construct(
         Request $request,
         Response $response,
         Logger $logger,  
         EventLogGateway $logGateway,
-        UserGateway $userGateway              
+        UserGateway $userGateway,
+        QuestionGateway $questionGateway
     ) {
         $this->request = $request;
         $this->response = $request;
         $this->logger = $logger;
         $this->logGateway = $logGateway;
         $this->userGateway = $userGateway;
+        $this->questionGateway = $questionGateway;
 
         // create bot object
         $httpClient = new CurlHTTPClient(getenv('CHANNEL_ACCESS_TOKEN'));
@@ -155,6 +163,31 @@ class Webhook extends Controller
                 $profile['userId'],
                 $profile['displayName']
             );
+        }
+    }
+
+    private function textMessage($event)
+    {
+        $userMessage = $event['message']['text'];
+        if($this->user['number'] == 0)
+        {
+            if(strtolower($userMessage) == 'mulai')
+            {
+                // reset score
+                $this->userGateway->setScore($this->user['user_id'], 0);
+                // update number progress
+                $this->userGateway->setUserProgress($this->user['user_id'], 1);
+                // send question no.1
+                $this->sendQuestion($event['replyToken'], 1);
+            } else {
+                $message = 'Silakan kirim pesan "MULAI" untuk memulai kuis.';
+                $textMessageBuilder = new TextMessageBuilder($message);
+                $this->bot->replyMessage($event['replyToken'], $textMessageBuilder);
+            }
+    
+            // if user already begin test
+        } else {
+            $this->checkAnswer($userMessage, $event['replyToken']);
         }
     }
 }

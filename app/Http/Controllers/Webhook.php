@@ -55,6 +55,10 @@ class Webhook extends Controller
         $this->logger = $logger;
         $this->logGateway = $logGateway;
         $this->userGateway = $userGateway;
+
+        // create bot object
+        $httpClient = new CurlHTTPClient(getenv('CHANNEL_ACCESS_TOKEN'));
+        $this->bot  = new LINEBot($httpClient, ['channelSecret' => getenv('CHANNEL_SECRET')]);
     }
 
     public function __invoke()

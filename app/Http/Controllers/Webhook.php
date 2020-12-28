@@ -208,4 +208,25 @@ class Webhook extends Controller
         // send message
         $this->bot->replyMessage($event['replyToken'], $multiMessageBuilder);
     }
+
+    private function sendQuestion($replyToken, $questionNum=1)
+    {
+        // get question from database
+        $question = $this->questionGateway->getQuestion($questionNum);
+    
+        // prepare answer options
+        for($opsi = "a"; $opsi <= "d"; $opsi++) {
+            if(!empty($question['option_'.$opsi]))
+                $options[] = new MessageTemplateActionBuilder($question['option_'.$opsi], $question['option_'.$opsi]);
+        }
+    
+        // prepare button template
+        $buttonTemplate = new ButtonTemplateBuilder($question['number']."/10", $question['text'], $question['image'], $options);
+    
+        // build message
+        $messageBuilder = new TemplateMessageBuilder("Gunakan mobile app untuk melihat soal", $buttonTemplate);
+    
+        // send message
+        $response = $this->bot->replyMessage($replyToken, $messageBuilder);
+    }
 }

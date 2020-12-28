@@ -31,7 +31,7 @@ class UserGateway
 
     public function saveUser(string $userId, string $displayName)
     {
-        $this->db->table('user')->insert([
+        $this->db->table('users')->insert([
             'user_id' => $userId,
             'display_name' => $displayName
         ]);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Gateway\EventLogGateway;
+use App\Gateway\UserGateway;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -38,6 +39,10 @@ class Webhook extends Controller
      * @var EventLogGateway
      */
     private $logGateway;
+    /**
+     * @var UserGateway
+     */
+    private $userGateway;
 
     public function __construct(
         Request $request,
@@ -49,6 +54,7 @@ class Webhook extends Controller
         $this->response = $request;
         $this->logger = $logger;
         $this->logGateway = $logGateway;
+        $this->userGateway = $userGateway;
     }
 
     public function __invoke()
@@ -65,4 +71,49 @@ class Webhook extends Controller
 
         return $this->handleEvents();
     }    
+
+    public function handleEvents()
+    {
+        $data = $this->request->all();
+
+        if (is_array($data['events'])) 
+        {
+            foreach ($variable as $key => $value) 
+            {
+                // skip group and room event
+                if (! isset($event['source']['userId'])) continue;
+
+                // get user data from database
+                $this->user = $this->userGateway->getUser($event['source']['userId']);
+
+                // if user not registered
+                if (! $this->user) {
+                    $this->followCallback($vent);
+                }
+                else 
+                {
+                    // respond event
+                    if ($event['type'] == 'message') 
+                    {
+                        if ($event($this, $event['message']['type'].'Message')) 
+                        {
+                            $this->{$event['message']['type'].'Message'}($event);
+                        }
+                        else 
+                        {
+                            if (method_exists($this, $event['type'].'Callback')) 
+                            {
+                                $this->{$event['type'].'Callback'}($event);
+                            }
+                        }
+                    }
+                }
+
+                $this->response->setContent('No events found!');
+                $this->response->setStatusCode(200);
+
+                return $this->response;
+            }
+        }
+    }
 }

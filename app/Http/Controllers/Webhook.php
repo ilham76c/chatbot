@@ -190,4 +190,22 @@ class Webhook extends Controller
             $this->checkAnswer($userMessage, $event['replyToken']);
         }
     }
+
+    private function stickerMessage($event)
+    {
+        // create sticker message
+        $stickerMessageBuilder = new StickerMessageBuilder(1, 106);
+    
+        // create text message
+        $message = 'Silakan kirim pesan "MULAI" untuk memulai kuis.';
+        $textMessageBuilder = new TextMessageBuilder($message);
+    
+        // merge all message
+        $multiMessageBuilder = new MultiMessageBuilder();
+        $multiMessageBuilder->add($stickerMessageBuilder);
+        $multiMessageBuilder->add($textMessageBuilder);
+    
+        // send message
+        $this->bot->replyMessage($event['replyToken'], $multiMessageBuilder);
+    }
 }

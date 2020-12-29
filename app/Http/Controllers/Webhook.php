@@ -64,7 +64,7 @@ class Webhook extends Controller
         QuestionGateway $questionGateway
     ) {
         $this->request = $request;
-        $this->response = $request;
+        $this->response = $response;
         $this->logger = $logger;
         $this->logGateway = $logGateway;
         $this->userGateway = $userGateway;
@@ -127,7 +127,7 @@ class Webhook extends Controller
                     }
                 }
 
-                $this->response->setContent('No events found!');
+                $this->response->setContent("No events found!");
                 $this->response->setStatusCode(200);
 
                 return $this->response;

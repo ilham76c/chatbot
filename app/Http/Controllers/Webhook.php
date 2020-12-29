@@ -113,7 +113,7 @@ class Webhook extends Controller
                     // respond event
                     if ($event['type'] == 'message') 
                     {
-                        if ($event($this, $event['message']['type'].'Message')) 
+                        if(method_exists($this, $event['message']['type'].'Message'))
                         {
                             $this->{$event['message']['type'].'Message'}($event);
                         }

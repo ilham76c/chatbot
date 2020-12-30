@@ -126,13 +126,13 @@ class Webhook extends Controller
                         }
                     }
                 }
-
-                $this->response->setContent("No events found!");
-                $this->response->setStatusCode(200);
-
-                return $this->response;
             }
         }
+        
+        $this->response->setContent("No events found!");
+        $this->response->setStatusCode(200);
+
+        return $this->response;
     }
 
     public function followCallback($event)
